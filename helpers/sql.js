@@ -40,38 +40,49 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *    {minEmployees: num_employees, maxEmployees: num_employees, nameLike: name }
  *
  * Returns:
- *  { whereCols: 'num_employees > $1, num_employees < $2', name ILIKE $3',
+ *  { whereCols: 'num_employees >= $1 AND num_employees <= $2' AND name ILIKE $3',
  *    values: [2, 4, "%Aliya%]}
  *
  */
- function sqlForFilter(dataToFilter) {
-  const jsToSql = {
-    'minEmployees': 'num_employees',
-    'maxEmployees': 'num_employees',
-    'nameLike': 'name' };
-
+ function sqlForFilter(dataToFilter, jsToSql) {
   const keys = Object.keys(dataToFilter);
-  if (keys.length === 0) return null;
+  if (keys.length === 0) return null; // null tells us no WHERE
 
 
   // {minEmployees: 2, maxEmployees: 4, nameLike: 'Aliya', age: 32} =>
   // ['num_employees > $1', 'num_employees < $2', 'name ILIKE $3']
 
+  // somewhere we need to findout what key we're working with
+    // nameLike '%Aliya%"
+    // if both min and max present, need to possibly throw error
+
   const cols = []
+  const idx = 1;
+
+  // check what filter
+  // adjust accordingly
+  // add to cols array and increment idx
 
   if (dataToFilter.minEmployees) {
-    const colName = minEmployees;
-    cols.push(`"${jsToSql[colName] || colName}" > ${idx + 1}`)
+    const colName = jsToSql[minEmployees];
+    cols.push(`"${jsToSql[colName] || colName}" >= ${idx}`);
+    idx++;
+
+  }
+
+  if (dataToFilter.maxEmployees) {
+    const colName = jsToSql[maxEmployees];
+    cols.push(`"${jsToSql[colName] || colName}" <= ${idx}`);
+    idx++;
+
   }
 
   if (dataToFilter.nameLike) {
-    const colName = nameLike;
+    const colName = jsToSql[nameLike];
     dataToFilter.nameLike = `%${dataToFilter.nameLike}%`;
-    cols.push(`"${jsToSql[colName] || colName}"ILIKE $${idx + 1}`)
+    cols.push(`"${jsToSql[colName] || colName}"ILIKE $${idx}`);
+    idx++;
   }
-
-
-
 
   return {
     whereCols: cols.join(" AND "),

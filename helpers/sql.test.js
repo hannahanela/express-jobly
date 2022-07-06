@@ -61,6 +61,17 @@ describe("sqlForFilter method", function () {
     });
   });
 
+  test("filter for nameLike returns correctly", function () {
+    const dataToFilter = {
+      nameLike: 'Aliya'
+    };
+    const res = sqlForFilter(dataToFilter);
+    expect(res).toEqual({
+      whereCols: 'name ILIKE $1',
+      values: ["%Aliya%"]
+    });
+  });
+
   test("partial update fails, returns error if not valid inputs", function () {
     const dataToUpdate = {};
     const jsToSql = { firstName: "first_name" };
@@ -70,5 +81,9 @@ describe("sqlForFilter method", function () {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
+
+  // only passed nameLike --> returns what?
+  // only passed minEmp (and not maxEmp)
+  //
 
 });
