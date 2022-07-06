@@ -4,7 +4,7 @@ const request = require("supertest");
 
 const db = require("../db.js");
 const app = require("../app");
-const { sqlForPartialUpdate } = require("./sql");
+const { sqlForPartialUpdate, sqlForFilter } = require("./sql");
 
 const {
   commonBeforeAll,
@@ -31,6 +31,33 @@ describe("sqlForPartialUpdate method", function () {
     expect(res).toEqual({
       setCols: '"first_name"=$1, "age"=$2',
       values: ['Aliya', 32]
+    });
+  });
+
+  test("partial update fails, returns error if not valid inputs", function () {
+    const dataToUpdate = {};
+    const jsToSql = { firstName: "first_name" };
+    try {
+      sqlForPartialUpdate(dataToUpdate, jsToSql);
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+});
+
+describe("sqlForFilter method", function () {
+  test("filter for 3 input returns correctly", function () {
+
+    const dataToFilter = {
+      minEmployees: 2,
+      maxEmployees: 4,
+      nameLike: 'Aliya'
+    };
+    const res = sqlForFilter(dataToFilter);
+    expect(res).toEqual({
+      whereCols: 'num_employees > $1, num_employees < $2, name ILIKE $3',
+      values: [2, 4, "%Aliya%"]
     });
   });
 
