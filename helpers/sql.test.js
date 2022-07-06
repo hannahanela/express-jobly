@@ -50,25 +50,39 @@ describe("sqlForFilter method", function () {
   test("filter for 3 input returns correctly", function () {
 
     const dataToFilter = {
-      minEmployees: 2,
-      maxEmployees: 4,
-      nameLike: 'Aliya'
+      minEmployees: 1,
+      maxEmployees: 3,
+      nameLike: 'C1'
     };
-    const res = sqlForFilter(dataToFilter);
+
+    const jsToSql = {
+      minEmployees: 'num_employees',
+      maxEmployees: 'num_employees',
+      nameLike: 'name'
+    };
+
+    const res = sqlForFilter(dataToFilter, jsToSql);
     expect(res).toEqual({
-      whereCols: 'num_employees > $1, num_employees < $2, name ILIKE $3',
-      values: [2, 4, "%Aliya%"]
+      whereClause: `WHERE "num_employees">=$1 AND "num_employees"<=$2 AND "name" ILIKE $3`,
+      values: [1, 3, "%C1%"]
     });
   });
 
   test("filter for nameLike returns correctly", function () {
     const dataToFilter = {
-      nameLike: 'Aliya'
+      nameLike: 'C1'
     };
-    const res = sqlForFilter(dataToFilter);
+
+    const jsToSql = {
+      minEmployees: 'num_employees',
+      maxEmployees: 'num_employees',
+      nameLike: 'name'
+    };
+
+    const res = sqlForFilter(dataToFilter, jsToSql);
     expect(res).toEqual({
-      whereCols: 'name ILIKE $1',
-      values: ["%Aliya%"]
+      whereClause: `WHERE "name" ILIKE $1`,
+      values: ["%C1%"]
     });
   });
 
@@ -76,9 +90,16 @@ describe("sqlForFilter method", function () {
     const dataToFilter = {
       minEmployees: 2,
     };
-    const res = sqlForFilter(dataToFilter);
+
+    const jsToSql = {
+      minEmployees: 'num_employees',
+      maxEmployees: 'num_employees',
+      nameLike: 'name'
+    };
+
+    const res = sqlForFilter(dataToFilter, jsToSql);
     expect(res).toEqual({
-      whereCols: 'num_employees >= $1',
+      whereClause: `WHERE "num_employees">=$1`,
       values: [2]
     });
   });
@@ -87,25 +108,31 @@ describe("sqlForFilter method", function () {
     const dataToFilter = {
       maxEmployees: 2,
     };
-    const res = sqlForFilter(dataToFilter);
+
+    const jsToSql = {
+      minEmployees: 'num_employees',
+      maxEmployees: 'num_employees',
+      nameLike: 'name'
+    };
+
+    const res = sqlForFilter(dataToFilter, jsToSql);
     expect(res).toEqual({
-      whereCols: 'num_employees <= $1',
+      whereClause: `WHERE "num_employees"<=$1`,
       values: [2]
     });
   });
 
-  test("partial update fails, returns error if not valid inputs", function () {
-    const dataToUpdate = {};
-    const jsToSql = { firstName: "first_name" };
-    try {
-      sqlForPartialUpdate(dataToUpdate, jsToSql);
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
-  });
+  test("return null if input is empty", function () {
+    const dataToFilter = {};
 
-  // only passed nameLike --> returns what?
-  // only passed minEmp (and not maxEmp)
-  //
+    const jsToSql = {
+      minEmployees: 'num_employees',
+      maxEmployees: 'num_employees',
+      nameLike: 'name'
+    };
+
+    const res = sqlForFilter(dataToFilter, jsToSql);
+    expect(res).toEqual(null);
+  });
 
 });

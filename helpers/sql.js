@@ -37,7 +37,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *    {minEmployees: 2, maxEmployees: 4, nameLike: 'Aliya'}
  *
  *  jsToSql: JS camelCase key name with values of SQL snake_case key name.
- *    {minEmployees: num_employees, maxEmployees: num_employees, nameLike: name }
+ *    {minEmployees: 'num_employees', maxEmployees: 'num_employees', nameLike: 'name' }
  *
  * Returns:
  *  { whereCols: 'num_employees >= $1 AND num_employees <= $2' AND name ILIKE $3',
@@ -57,35 +57,37 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
     // if both min and max present, need to possibly throw error
 
   const cols = []
-  const idx = 1;
+  let idx = 1;
 
   // check what filter
   // adjust accordingly
   // add to cols array and increment idx
 
   if (dataToFilter.minEmployees) {
-    const colName = jsToSql[minEmployees];
-    cols.push(`"${jsToSql[colName] || colName}" >= ${idx}`);
+    const colName = "minEmployees";
+    cols.push(`"${jsToSql[colName] || colName}">=$${idx}`);
     idx++;
 
   }
 
   if (dataToFilter.maxEmployees) {
-    const colName = jsToSql[maxEmployees];
-    cols.push(`"${jsToSql[colName] || colName}" <= ${idx}`);
+    const colName = "maxEmployees";
+    cols.push(`"${jsToSql[colName] || colName}"<=$${idx}`);
     idx++;
 
   }
 
   if (dataToFilter.nameLike) {
-    const colName = jsToSql[nameLike];
+    const colName = "nameLike";
     dataToFilter.nameLike = `%${dataToFilter.nameLike}%`;
-    cols.push(`"${jsToSql[colName] || colName}"ILIKE $${idx}`);
+    cols.push(`"${jsToSql[colName] || colName}" ILIKE $${idx}`);
     idx++;
   }
 
+  console.log("IN SQL FUNCTION", `WHERE ${cols.join(" AND ")}`);
+
   return {
-    whereCols: cols.join(" AND "),
+    whereClause: `WHERE ${cols.join(" AND ")}`,
     values: Object.values(dataToFilter),
   };
 }
