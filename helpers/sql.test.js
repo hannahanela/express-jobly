@@ -72,6 +72,28 @@ describe("sqlForFilter method", function () {
     });
   });
 
+  test("filter for minEmployees returns correctly", function () {
+    const dataToFilter = {
+      minEmployees: 2,
+    };
+    const res = sqlForFilter(dataToFilter);
+    expect(res).toEqual({
+      whereCols: 'num_employees >= $1',
+      values: [2]
+    });
+  });
+
+  test("filter for maxEmployees returns correctly", function () {
+    const dataToFilter = {
+      maxEmployees: 2,
+    };
+    const res = sqlForFilter(dataToFilter);
+    expect(res).toEqual({
+      whereCols: 'num_employees <= $1',
+      values: [2]
+    });
+  });
+
   test("partial update fails, returns error if not valid inputs", function () {
     const dataToUpdate = {};
     const jsToSql = { firstName: "first_name" };
