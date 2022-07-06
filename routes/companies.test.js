@@ -99,7 +99,7 @@ describe("GET /companies", function () {
 // name .toCotain("string") case-insensitive
 // minEmployees toBeGreaterThanOrEqualTo(num)
 // maxEmployees toBeLessThanOrEqualTo(num)
-// test correct Error message w/ statusCode (Not Found)
+// test correct Error message w/ statusCode 400, BadRequestError
 
   test("can filter nameLike successfully", async function() {
     const resp = await request(app).get("/companies", {params: {nameLike: "C1"}});
@@ -116,7 +116,7 @@ describe("GET /companies", function () {
   });
 
   test("can filter minEmployees successfully", async function() {
-    const resp = await request(app).get("/companies", {params: {minEmployees: "2"}});
+    const resp = await request(app).get("/companies", {params: {minEmployees: 2}});
     expect(resp.body).toEqual({
       companies:
           [
@@ -139,7 +139,7 @@ describe("GET /companies", function () {
   });
 
   test("can filter maxEmployees successfully", async function() {
-    const resp = await request(app).get("/companies", {params: {maxEmployees: "2"}});
+    const resp = await request(app).get("/companies", {params: {maxEmployees: 2}});
     expect(resp.body).toEqual({
       companies:
           [
@@ -159,6 +159,17 @@ describe("GET /companies", function () {
             },
           ],
         });
+  });
+
+  test("fails: bad filter inputs", async function() {
+    const resp = await request(app)
+      .get("/companies", {
+        params: {
+          minEmployees: 500,
+          maxEmployees: 2}
+        });
+    expect(resp.statusCode).toEqual(400);
+
   });
 
   test("fails: test next() handler", async function () {
