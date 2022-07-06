@@ -58,6 +58,7 @@ class User {
 
   static async register(
       { username, password, firstName, lastName, email, isAdmin }) {
+    console.log("IN REGISTER: ", username, password, firstName, lastName, email, isAdmin, BCRYPT_WORK_FACTOR);
     const duplicateCheck = await db.query(
           `SELECT username
            FROM users
@@ -173,9 +174,9 @@ class User {
         });
     const usernameVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE users 
-                      SET ${setCols} 
-                      WHERE username = ${usernameVarIdx} 
+    const querySql = `UPDATE users
+                      SET ${setCols}
+                      WHERE username = ${usernameVarIdx}
                       RETURNING username,
                                 first_name AS "firstName",
                                 last_name AS "lastName",

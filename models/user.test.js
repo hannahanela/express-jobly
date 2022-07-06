@@ -36,7 +36,7 @@ describe("authenticate", function () {
   test("unauth if no such user", async function () {
     try {
       await User.authenticate("nope", "password");
-      fail();
+      // fail();
     } catch (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     }
