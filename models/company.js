@@ -70,6 +70,7 @@ class Company {
            ORDER BY name`);
     return companiesRes.rows;
     } else {
+      console.log("IN FINDALL, ELSE STATEMENT")
       const { whereClause, values } = sqlForFilter(
         queryParams,
         {

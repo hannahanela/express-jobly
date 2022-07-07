@@ -46,7 +46,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *       nameLike: 'name' }
  *
  * Returns:
- *  { whereCols: 'num_employees >= $1 AND num_employees <= $2' AND name ILIKE $3',
+ *  { whereClause: 'WHERE "num_employees">= $1 AND "num_employees"<= $2' AND "name" ILIKE $3',
  *    values: [2, 4, "%Aliya%]}
  *
  */
@@ -59,14 +59,14 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
   if (dataToFilter.minEmployees) {
     const colName = "minEmployees";
-    cols.push(`"${jsToSql[colName] || colName}">=$${idx}`);
+    cols.unshift(`"${jsToSql[colName] || colName}">=$${idx}`);
     idx++;
 
   }
 
   if (dataToFilter.maxEmployees) {
     const colName = "maxEmployees";
-    cols.push(`"${jsToSql[colName] || colName}"<=$${idx}`);
+    cols.unshift(`"${jsToSql[colName] || colName}"<=$${idx}`);
     idx++;
 
   }

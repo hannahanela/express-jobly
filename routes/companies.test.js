@@ -97,6 +97,31 @@ describe("GET /companies", function () {
     });
   });
 
+  test("ok with all filters", async function () {
+    const resp = await request(app).get("/companies",
+      {params: {minEmployees: "2", maxEmployees: "3", nameLike: "C"}});
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            },
+            {
+              handle: "c3",
+              name: "C3",
+              description: "Desc3",
+              numEmployees: 3,
+              logoUrl: "http://c3.img",
+            },
+          ],
+    });
+  });
+
   test("can filter nameLike successfully", async function() {
     const resp = await request(app).get("/companies", {params: {nameLike: "C1"}});
     expect(resp.statusCode).toEqual(200);

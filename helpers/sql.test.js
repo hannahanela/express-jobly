@@ -51,8 +51,8 @@ describe("sqlForFilter method", function () {
 
     const dataToFilter = {
       minEmployees: 1,
+      nameLike: 'C1',
       maxEmployees: 3,
-      nameLike: 'C1'
     };
 
     const jsToSql = {
@@ -63,8 +63,8 @@ describe("sqlForFilter method", function () {
 
     const res = sqlForFilter(dataToFilter, jsToSql);
     expect(res).toEqual({
-      whereClause: `WHERE "num_employees">=$1 AND "num_employees"<=$2 AND "name" ILIKE $3`,
-      values: [1, 3, "%C1%"]
+      whereClause: `WHERE "num_employees"<=$2 AND "num_employees">=$1 AND "name" ILIKE $3`,
+      values: [1, "%C1%", 3,]
     });
   });
 
