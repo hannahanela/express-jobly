@@ -1,5 +1,6 @@
 "use strict";
 
+const req = require("express/lib/request");
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
@@ -60,7 +61,8 @@ describe("create", function () {
 
 describe("findAll", function () {
   test("works: no filter", async function () {
-    let companies = await Company.findAll();
+    const reqParam = {};
+    let companies = await Company.findAll(reqParam);
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -84,6 +86,45 @@ describe("findAll", function () {
         logoUrl: "http://c3.img",
       },
     ]);
+  });
+
+  test("works: with filter", async function () {
+    const reqParam = {"nameLike": "c"};
+    let companies = await Company.findAll(reqParam);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      },
+    ]);
+  });
+
+  test("works: with filter", async function () {
+    const reqParam = {"minEmployees": 5000, "maxEmployees": 2};
+
+    try {
+      await Company.findAll(reqParam);
+      throw new Error("You should not be here!")
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
   });
 });
 

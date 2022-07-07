@@ -35,7 +35,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  * Inputs:
  *  dataToFilter: an object of column names as keys and values to update.
  *    {minEmployees: 2, maxEmployees: 4, nameLike: 'Aliya'}
- * 
+ *
  *  If no inputs for dataToFilter, returns null to indicate no WHERE Clause
  *    needed.
  *

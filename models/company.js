@@ -50,7 +50,7 @@ class Company {
   }
 
   /** Find all companies.
-   * 
+   *
    *  Allows for filtering by name, minEmployee, or maxEmployee. Optional for
    *    method.
    *
@@ -77,6 +77,7 @@ class Company {
           maxEmployees: 'num_employees',
           nameLike: 'name'
         })
+        console.log("WHERECLAUSE@@@", whereClause, " VALUES: ", values);
         const companiesRes = await db.query(
           `SELECT handle,
                   name,

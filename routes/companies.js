@@ -11,7 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
-
+const companyFilterSchema = require("../schemas/companyFilter.json");
 const router = new express.Router();
 
 
@@ -28,7 +28,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyNewSchema,
-    {required: true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -51,7 +51,30 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  console.log("router.get", req.query);
+  console.log("router.get req.query", req.query);
+
+  let query = req.query;
+
+  if (req.query.minEmployees) {
+    query.minEmployees = Number(req.query.minEmployees);
+  }
+
+  if (req.query.maxEmployees) {
+    query.maxEmployees = Number(req.query.maxEmployees);
+  }
+
+  console.log("router.get query", query);
+
+  const validator = jsonschema.validate(
+    query,
+    companyFilterSchema,
+    { required: true }
+  );
+  if (!validator.valid) {
+    const errs = validator.errors.map(e => e.stack);
+    throw new BadRequestError(errs);
+  }
+
   const companies = await Company.findAll(req.query);
   return res.json({ companies });
 });
@@ -84,7 +107,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyUpdateSchema,
-    {required:true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
