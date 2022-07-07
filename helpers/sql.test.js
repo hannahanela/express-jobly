@@ -39,14 +39,14 @@ describe("sqlForPartialUpdate method", function () {
     const jsToSql = { firstName: "first_name" };
     try {
       sqlForPartialUpdate(dataToUpdate, jsToSql);
-      // TODO: throw new error (shouldn't reach point)
+      throw new Error("you should not be here!")
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
 
 });
-// TODO: additional refactoring for jsToSql changes.
+
 describe("sqlForFilter method", function () {
   test("filter for 3 input returns correctly", function () {
 
@@ -56,13 +56,7 @@ describe("sqlForFilter method", function () {
       maxEmployees: 3,
     };
 
-    const jsToSql = {
-      minEmployees: 'num_employees',
-      maxEmployees: 'num_employees',
-      nameLike: 'name'
-    };
-
-    const res = sqlForFilter(dataToFilter, jsToSql);
+    const res = sqlForFilter(dataToFilter);
     expect(res).toEqual({
       whereClause: `WHERE "num_employees">=$1 AND "num_employees"<=$2 AND "name" ILIKE $3`,
       values: [1, 3, "%C1%"]
@@ -74,13 +68,7 @@ describe("sqlForFilter method", function () {
       nameLike: 'C1'
     };
 
-    const jsToSql = {
-      minEmployees: 'num_employees',
-      maxEmployees: 'num_employees',
-      nameLike: 'name'
-    };
-
-    const res = sqlForFilter(dataToFilter, jsToSql);
+    const res = sqlForFilter(dataToFilter);
     expect(res).toEqual({
       whereClause: `WHERE "name" ILIKE $1`,
       values: ["%C1%"]
@@ -92,13 +80,7 @@ describe("sqlForFilter method", function () {
       minEmployees: 2,
     };
 
-    const jsToSql = {
-      minEmployees: 'num_employees',
-      maxEmployees: 'num_employees',
-      nameLike: 'name'
-    };
-
-    const res = sqlForFilter(dataToFilter, jsToSql);
+    const res = sqlForFilter(dataToFilter);
     expect(res).toEqual({
       whereClause: `WHERE "num_employees">=$1`,
       values: [2]
@@ -110,30 +92,18 @@ describe("sqlForFilter method", function () {
       maxEmployees: 2,
     };
 
-    const jsToSql = {
-      minEmployees: 'num_employees',
-      maxEmployees: 'num_employees',
-      nameLike: 'name'
-    };
-
-    const res = sqlForFilter(dataToFilter, jsToSql);
+    const res = sqlForFilter(dataToFilter);
     expect(res).toEqual({
       whereClause: `WHERE "num_employees"<=$1`,
       values: [2]
     });
   });
-// TODO: make changes for refactoring
+
   test("return null if input is empty", function () {
     const dataToFilter = {};
 
-    const jsToSql = {
-      minEmployees: 'num_employees',
-      maxEmployees: 'num_employees',
-      nameLike: 'name'
-    };
-
-    const res = sqlForFilter(dataToFilter, jsToSql);
-    expect(res).toEqual(null);
+    const res = sqlForFilter(dataToFilter);
+    expect(res).toEqual("");
   });
 
 });

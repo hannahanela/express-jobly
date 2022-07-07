@@ -1,5 +1,6 @@
 "use strict";
 
+const req = require("express/lib/request");
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate, sqlForFilter } = require("../helpers/sql");
@@ -49,9 +50,6 @@ class Company {
     return company;
   }
 
-  // TODO: refactor to reduce redundancy (human error).
-  // update WHERE clause to accommodate.
-  // line 94, replace spread and just pass values (already an array).
   /** Find all companies.
    *
    *  Allows for filtering by name, minEmployee, or maxEmployee. Optional for
@@ -61,39 +59,26 @@ class Company {
    * */
 
   static async findAll(queryParams) {
-    console.log("in findAll", Object.keys(queryParams).length);
+    console.log("in findAll", queryParams);
 
-    if (Object.keys(queryParams).length === 0) {
-      const companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
-      return companiesRes.rows;
-    } else {
+    const { whereClause, values } = sqlForFilter(
+      queryParams,
+      {
+        minEmployees: 'num_employees',
+        maxEmployees: 'num_employees',
+        nameLike: 'name'
+      });
 
-      const { whereClause, values } = sqlForFilter(
-        queryParams,
-        {
-          minEmployees: 'num_employees',
-          maxEmployees: 'num_employees',
-          nameLike: 'name'
-        })
-
-      const companiesRes = await db.query(
-        `SELECT handle,
+    const companiesRes = await db.query(
+      `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
              FROM companies
              ${whereClause}
-             ORDER BY name`, [...values]);
-      return companiesRes.rows;
-    }
+             ORDER BY name`, values);
+    return companiesRes.rows;
   }
 
 

@@ -58,7 +58,7 @@ describe("create", function () {
 });
 
 /************************************** findAll */
-
+//TODO: move sql filter function tests here later
 describe("findAll", function () {
   test("works: no filter", async function () {
     const reqParam = {};
@@ -87,20 +87,11 @@ describe("findAll", function () {
       },
     ]);
   });
-// FIXME: filter test doesn't filter our test cases
-// TODO: add more tests: individual filters
-// test request empty array comes back for inputs that don't exist
+
   test("works: with filter", async function () {
-    const reqParam = { "nameLike": "c" };
+    const reqParam = { "nameLike": "2" };
     let companies = await Company.findAll(reqParam);
     expect(companies).toEqual([
-      {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
-      },
       {
         handle: "c2",
         name: "C2",
@@ -108,15 +99,15 @@ describe("findAll", function () {
         numEmployees: 2,
         logoUrl: "http://c2.img",
       },
-      {
-        handle: "c3",
-        name: "C3",
-        description: "Desc3",
-        numEmployees: 3,
-        logoUrl: "http://c3.img",
-      },
     ]);
   });
+
+  test("works: none found with filters", async function () {
+    const reqParam = { "nameLike": "ASDFDSFDSF" };
+    let companies = await Company.findAll(reqParam);
+    expect(companies).toEqual([]);
+  });
+
 });
 
 /************************************** get */

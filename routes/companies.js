@@ -50,6 +50,8 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  * Authorization required: none
  */
 
+//TODO: move max min validation to company model
+
 router.get("/", async function (req, res, next) {
   console.log("router.get req.query", req.query);
 
@@ -61,11 +63,12 @@ router.get("/", async function (req, res, next) {
 
   if (req.query.maxEmployees) {
     query.maxEmployees = Number(req.query.maxEmployees);
-    // FIXME: only do comparison only if both exist (as numbers)
-    // 0 falsy
-    if (req.query.minEmployees > req.query.maxEmployees) {
-      throw new BadRequestError("minEmployees cannot exceed maxEmployees.");
-    }
+  }
+
+  if (req.query.minEmployees !== undefined &&
+    req.query.maxEmployees !== undefined &&
+    query.minEmployees > query.maxEmployees) {
+    throw new BadRequestError("minEmployees cannot exceed maxEmployees.");
   }
 
   const validator = jsonschema.validate(

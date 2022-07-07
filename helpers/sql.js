@@ -52,41 +52,32 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *    values: [2, 4, "%Aliya%]}
  *
  */
-// TODO: jsToSql param unnecessary. Can just supply specific SQL col name needed.
-// swap lines 70&71 --> push first and then use length to determine $ value,
-// rather than using idx
-// _sqlForFilter under Company --> only used for filtering Companies
-function sqlForFilter(dataToFilter, jsToSql) {
+// TODO: _sqlForFilter under Company --> only used for filtering Companies
+function sqlForFilter(dataToFilter) {
   console.log("in sqlForFilter");
 
   const keys = Object.keys(dataToFilter);
-  if (keys.length === 0) return null;
+  if (keys.length === 0) return {whereClause: "", values: []};
 
   const cols = [];
   const filterVals = [];
-  let idx = 1;
 
   if (dataToFilter.minEmployees) {
-    const colName = "minEmployees";
-    cols.push(`"${jsToSql[colName] || colName}">=$${idx}`);
     filterVals.push(dataToFilter.minEmployees);
-    idx++;
+    cols.push(`"num_employees">=$${filterVals.length}`);
   }
 
   if (dataToFilter.maxEmployees) {
-    const colName = "maxEmployees";
-    cols.push(`"${jsToSql[colName] || colName}"<=$${idx}`);
     filterVals.push(dataToFilter.maxEmployees);
-    idx++;
+    cols.push(`"num_employees"<=$${filterVals.length}`);
   }
 
   if (dataToFilter.nameLike) {
-    const colName = "nameLike";
-    dataToFilter.nameLike = `%${dataToFilter.nameLike}%`;
-    cols.push(`"${jsToSql[colName] || colName}" ILIKE $${idx}`);
-    filterVals.push(dataToFilter.nameLike);
-    idx++;
+    filterVals.push(`%${dataToFilter.nameLike}%`);
+    cols.push(`"name" ILIKE $${filterVals.length}`);
   }
+
+  console.log(filterVals);
 
   return {
     whereClause: `WHERE ${cols.join(" AND ")}`,

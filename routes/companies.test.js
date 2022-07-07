@@ -204,7 +204,7 @@ describe("GET /companies", function () {
     const resp = await request(app)
       .get("/companies")
       .query({
-        minEmployees: 500,
+        minEmpl: 500,
         maxEmployees: 2
       });
 
