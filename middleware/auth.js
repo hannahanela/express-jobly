@@ -42,6 +42,20 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
+/** Middleware to use when they must be logged in.
+ *
+ * If not, raises Unauthorized.
+ */
+
+ function ensureCurrentUser(req, res, next) {
+  try {
+    if (!res.locals.user || res.locals.user.username !== req.params.username) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
 /** Middleware to use when they must be logged in as admin.
  *
  * If not, raises Unauthorized.
@@ -65,4 +79,5 @@ module.exports = {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
+  ensureCurrentUser
 };

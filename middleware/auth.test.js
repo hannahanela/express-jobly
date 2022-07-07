@@ -6,6 +6,7 @@ const {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
+  ensureCurrentUser
 } = require("./auth");
 
 
@@ -75,6 +76,28 @@ describe("ensureLoggedIn", function () {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };
     ensureLoggedIn(req, res, next);
+  });
+});
+
+describe("ensureCurrentUser", function () {
+  test("works", function () {
+    expect.assertions(1);
+    const req = { params: { username: "test" } };
+    const res = { locals: { user: { username: "test" } } };
+    const next = function (err) {
+      expect(err).toBeFalsy();
+    };
+    ensureCurrentUser(req, res, next);
+  });
+
+  test("unauth if not current user", function () {
+    expect.assertions(1);
+    const req = { params: { username: "WRONGUSER" } };
+    const res = { locals: { user: { username: "test" } } };
+    const next = function (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    };
+    ensureCurrentUser(req, res, next);
   });
 });
 
