@@ -54,27 +54,29 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToFilter);
   if (keys.length === 0) return null;
 
-  const cols = []
+  const cols = [];
+  const filterVals = [];
   let idx = 1;
 
   if (dataToFilter.minEmployees) {
     const colName = "minEmployees";
-    cols.unshift(`"${jsToSql[colName] || colName}">=$${idx}`);
+    cols.push(`"${jsToSql[colName] || colName}">=$${idx}`);
+    filterVals.push(dataToFilter.minEmployees);
     idx++;
-
   }
 
   if (dataToFilter.maxEmployees) {
     const colName = "maxEmployees";
-    cols.unshift(`"${jsToSql[colName] || colName}"<=$${idx}`);
+    cols.push(`"${jsToSql[colName] || colName}"<=$${idx}`);
+    filterVals.push(dataToFilter.maxEmployees);
     idx++;
-
   }
 
   if (dataToFilter.nameLike) {
     const colName = "nameLike";
     dataToFilter.nameLike = `%${dataToFilter.nameLike}%`;
     cols.push(`"${jsToSql[colName] || colName}" ILIKE $${idx}`);
+    filterVals.push(dataToFilter.nameLike);
     idx++;
   }
 
@@ -82,7 +84,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
   return {
     whereClause: `WHERE ${cols.join(" AND ")}`,
-    values: Object.values(dataToFilter),
+    values: filterVals,
   };
 }
 

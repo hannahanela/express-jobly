@@ -116,7 +116,7 @@ describe("findAll", function () {
     ]);
   });
 
-  test("works: with filter", async function () {
+  test("fails: min max error", async function () {
     const reqParam = {"minEmployees": 5000, "maxEmployees": 2};
 
     try {
