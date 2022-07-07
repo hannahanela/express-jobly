@@ -61,9 +61,12 @@ router.get("/", async function (req, res, next) {
 
   if (req.query.maxEmployees) {
     query.maxEmployees = Number(req.query.maxEmployees);
+    // FIXME: only do comparison only if both exist (as numbers)
+    // 0 falsy
+    if (req.query.minEmployees > req.query.maxEmployees) {
+      throw new BadRequestError("minEmployees cannot exceed maxEmployees.");
+    }
   }
-
-  console.log("router.get query", query);
 
   const validator = jsonschema.validate(
     query,

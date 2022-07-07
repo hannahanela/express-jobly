@@ -39,13 +39,14 @@ describe("sqlForPartialUpdate method", function () {
     const jsToSql = { firstName: "first_name" };
     try {
       sqlForPartialUpdate(dataToUpdate, jsToSql);
+      // TODO: throw new error (shouldn't reach point)
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
 
 });
-
+// TODO: additional refactoring for jsToSql changes.
 describe("sqlForFilter method", function () {
   test("filter for 3 input returns correctly", function () {
 
@@ -63,8 +64,8 @@ describe("sqlForFilter method", function () {
 
     const res = sqlForFilter(dataToFilter, jsToSql);
     expect(res).toEqual({
-      whereClause: `WHERE "num_employees"<=$2 AND "num_employees">=$1 AND "name" ILIKE $3`,
-      values: [1, "%C1%", 3,]
+      whereClause: `WHERE "num_employees">=$1 AND "num_employees"<=$2 AND "name" ILIKE $3`,
+      values: [1, 3, "%C1%"]
     });
   });
 
@@ -121,7 +122,7 @@ describe("sqlForFilter method", function () {
       values: [2]
     });
   });
-
+// TODO: make changes for refactoring
   test("return null if input is empty", function () {
     const dataToFilter = {};
 

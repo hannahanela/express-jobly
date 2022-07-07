@@ -1,5 +1,6 @@
 const { BadRequestError } = require("../expressError");
 
+// TODO: Inputs: group text and examples for visual clarity.
 /** sqlForPartialUpdate: creates object of table columns and the values to be
  *  updated.
  *
@@ -20,7 +21,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
   // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
   const cols = keys.map((colName, idx) =>
-      `"${jsToSql[colName] || colName}"=$${idx + 1}`,
+    `"${jsToSql[colName] || colName}"=$${idx + 1}`,
   );
 
   return {
@@ -40,17 +41,24 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *    needed.
  *
  *  jsToSql: JS camelCase key name with values of SQL snake_case key name.
- *    {minEmployees:
- *      'num_employees',
+ *    {minEmployees:'num_employees',
  *       maxEmployees: 'num_employees',
  *       nameLike: 'name' }
  *
  * Returns:
- *  { whereClause: 'WHERE "num_employees">= $1 AND "num_employees"<= $2' AND "name" ILIKE $3',
+ *  { whereClause: 'WHERE "num_employees">= $1
+ *                    AND "num_employees"<= $2'
+ *                    AND "name" ILIKE $3',
  *    values: [2, 4, "%Aliya%]}
  *
  */
- function sqlForFilter(dataToFilter, jsToSql) {
+// TODO: jsToSql param unnecessary. Can just supply specific SQL col name needed.
+// swap lines 70&71 --> push first and then use length to determine $ value,
+// rather than using idx
+// _sqlForFilter under Company --> only used for filtering Companies
+function sqlForFilter(dataToFilter, jsToSql) {
+  console.log("in sqlForFilter");
+
   const keys = Object.keys(dataToFilter);
   if (keys.length === 0) return null;
 
@@ -79,8 +87,6 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
     filterVals.push(dataToFilter.nameLike);
     idx++;
   }
-
-  console.log("IN SQL FUNCTION", `WHERE ${cols.join(" AND ")}`);
 
   return {
     whereClause: `WHERE ${cols.join(" AND ")}`,

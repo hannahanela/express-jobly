@@ -32,7 +32,7 @@ describe("create", function () {
     expect(company).toEqual(newCompany);
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'new'`);
     expect(result.rows).toEqual([
@@ -87,9 +87,11 @@ describe("findAll", function () {
       },
     ]);
   });
-
+// FIXME: filter test doesn't filter our test cases
+// TODO: add more tests: individual filters
+// test request empty array comes back for inputs that don't exist
   test("works: with filter", async function () {
-    const reqParam = {"nameLike": "c"};
+    const reqParam = { "nameLike": "c" };
     let companies = await Company.findAll(reqParam);
     expect(companies).toEqual([
       {
@@ -114,17 +116,6 @@ describe("findAll", function () {
         logoUrl: "http://c3.img",
       },
     ]);
-  });
-
-  test("fails: min max error", async function () {
-    const reqParam = {"minEmployees": 5000, "maxEmployees": 2};
-
-    try {
-      await Company.findAll(reqParam);
-      throw new Error("You should not be here!")
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
   });
 });
 
@@ -170,7 +161,7 @@ describe("update", function () {
     });
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'c1'`);
     expect(result.rows).toEqual([{
@@ -197,7 +188,7 @@ describe("update", function () {
     });
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'c1'`);
     expect(result.rows).toEqual([{
@@ -234,7 +225,7 @@ describe("remove", function () {
   test("works", async function () {
     await Company.remove("c1");
     const res = await db.query(
-        "SELECT handle FROM companies WHERE handle='c1'");
+      "SELECT handle FROM companies WHERE handle='c1'");
     expect(res.rows.length).toEqual(0);
   });
 
