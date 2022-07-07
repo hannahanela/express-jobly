@@ -24,8 +24,6 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
     `"${jsToSql[colName] || colName}"=$${idx + 1}`,
   );
 
-  console.log("cols is", cols);
-  
   return {
     setCols: cols.join(", "),
     values: Object.values(dataToUpdate),
@@ -55,6 +53,10 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *
  */
 // TODO: _sqlForFilter under Company --> only used for filtering Companies
+
+// first_name First_Name
+// WHERE "First_Name" = "Brit"
+// retain case of identifier (ex. column name), wrapping in ""'s retains case
 function sqlForFilter(dataToFilter) {
   console.log("in sqlForFilter");
 
