@@ -11,6 +11,7 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  uAdminToken
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);

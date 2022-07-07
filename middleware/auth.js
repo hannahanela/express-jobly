@@ -49,7 +49,15 @@ function ensureLoggedIn(req, res, next) {
 
  function ensureCurrentUserOrAdmin(req, res, next) {
   try {
-    if (!res.locals.user || (res.locals.user.username !== req.params.username || res.locals.user.isAdmin !== true)) throw new UnauthorizedError();
+    if (!res.locals.user) {
+      throw new UnauthorizedError();
+    }
+
+    if (res.locals.user.username !== req.params.username) {
+      if (res.locals.user.isAdmin !== true) {
+        throw new UnauthorizedError();
+      }
+    }
     return next();
   } catch (err) {
     return next(err);
