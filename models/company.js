@@ -2,7 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const { sqlForPartialUpdate, sqlForFilter } = require("../helpers/sql");
 
 /** Related functions for companies. */
 
@@ -50,23 +50,46 @@ class Company {
   }
 
   /** Find all companies.
+   * 
+   *  Allows for filtering by name, minEmployee, or maxEmployee. Optional for
+   *    method.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
-    // { whereCols } = sqlForFilter(req.query)
-    const companiesRes = await db.query(
+  static async findAll(queryParams) {
+    console.log("in findAll", Object.keys(queryParams).length);
+    if (Object.keys(queryParams).length === 0) {
+      const companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
            FROM companies
-           --WHERE CLAUSE HERE--
            ORDER BY name`);
     return companiesRes.rows;
-  }
+    } else {
+      const { whereClause, values } = sqlForFilter(
+        queryParams,
+        {
+          minEmployees: 'num_employees',
+          maxEmployees: 'num_employees',
+          nameLike: 'name'
+        })
+        const companiesRes = await db.query(
+          `SELECT handle,
+                  name,
+                  description,
+                  num_employees AS "numEmployees",
+                  logo_url AS "logoUrl"
+             FROM companies
+             ${whereClause}
+             ORDER BY name`, [...values]);
+      return companiesRes.rows;
+      }
+    }
+
 
   /** Given a company handle, return data about company.
    *

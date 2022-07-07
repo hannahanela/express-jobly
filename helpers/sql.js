@@ -35,9 +35,15 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  * Inputs:
  *  dataToFilter: an object of column names as keys and values to update.
  *    {minEmployees: 2, maxEmployees: 4, nameLike: 'Aliya'}
+ * 
+ *  If no inputs for dataToFilter, returns null to indicate no WHERE Clause
+ *    needed.
  *
  *  jsToSql: JS camelCase key name with values of SQL snake_case key name.
- *    {minEmployees: 'num_employees', maxEmployees: 'num_employees', nameLike: 'name' }
+ *    {minEmployees:
+ *      'num_employees',
+ *       maxEmployees: 'num_employees',
+ *       nameLike: 'name' }
  *
  * Returns:
  *  { whereCols: 'num_employees >= $1 AND num_employees <= $2' AND name ILIKE $3',
@@ -46,22 +52,10 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  */
  function sqlForFilter(dataToFilter, jsToSql) {
   const keys = Object.keys(dataToFilter);
-  if (keys.length === 0) return null; // null tells us no WHERE
-
-
-  // {minEmployees: 2, maxEmployees: 4, nameLike: 'Aliya', age: 32} =>
-  // ['num_employees > $1', 'num_employees < $2', 'name ILIKE $3']
-
-  // somewhere we need to findout what key we're working with
-    // nameLike '%Aliya%"
-    // if both min and max present, need to possibly throw error
+  if (keys.length === 0) return null;
 
   const cols = []
   let idx = 1;
-
-  // check what filter
-  // adjust accordingly
-  // add to cols array and increment idx
 
   if (dataToFilter.minEmployees) {
     const colName = "minEmployees";
