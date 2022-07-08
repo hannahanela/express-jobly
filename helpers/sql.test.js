@@ -39,7 +39,7 @@ describe("sqlForPartialUpdate method", function () {
     const jsToSql = { firstName: "first_name" };
     try {
       sqlForPartialUpdate(dataToUpdate, jsToSql);
-      throw new Error("you should not be here!")
+      throw new Error("you should not be here!");
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
@@ -103,7 +103,7 @@ describe("sqlForFilter method", function () {
     const dataToFilter = {};
 
     const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual({"values": [], "whereClause": ""});
+    expect(res).toEqual({ "values": [], "whereClause": "" });
   });
 
 });
