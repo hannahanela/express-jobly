@@ -4,7 +4,7 @@
 
 require("dotenv").config();
 require("colors");
-const { DATABASE_TEST, DATABASE } = require("./.env");
+// const { DATABASE_TEST, DATABASE } = require("./.env");
 
 
 const SECRET_KEY = process.env.SECRET_KEY || "secret-dev";
