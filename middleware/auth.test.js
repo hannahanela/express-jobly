@@ -6,7 +6,7 @@ const {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
-  ensureCurrentUser
+  ensureCurrentUserOrAdmin
 } = require("./auth");
 
 
@@ -79,7 +79,7 @@ describe("ensureLoggedIn", function () {
   });
 });
 
-describe("ensureCurrentUser", function () {
+describe("ensureCurrentUserOrAdmin", function () {
   test("works", function () {
     expect.assertions(1);
     const req = { params: { username: "test" } };
@@ -87,7 +87,7 @@ describe("ensureCurrentUser", function () {
     const next = function (err) {
       expect(err).toBeFalsy();
     };
-    ensureCurrentUser(req, res, next);
+    ensureCurrentUserOrAdmin(req, res, next);
   });
 
   test("unauth if not current user", function () {
@@ -97,11 +97,11 @@ describe("ensureCurrentUser", function () {
     const next = function (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };
-    ensureCurrentUser(req, res, next);
+    ensureCurrentUserOrAdmin(req, res, next);
   });
 });
 
-
+//TODO: unauth because isadmin was never provided
 describe("ensureAdmin", function () {
   test("works", function () {
     expect.assertions(1);
