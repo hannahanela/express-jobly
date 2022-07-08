@@ -4,7 +4,7 @@ const request = require("supertest");
 
 const db = require("../db.js");
 const app = require("../app");
-const { sqlForPartialUpdate, sqlForFilter } = require("./sql");
+const { sqlForPartialUpdate } = require("./sql");
 
 const {
   commonBeforeAll,
@@ -43,67 +43,6 @@ describe("sqlForPartialUpdate method", function () {
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
-  });
-
-});
-
-describe("sqlForFilter method", function () {
-  test("filter for 3 input returns correctly", function () {
-
-    const dataToFilter = {
-      minEmployees: 1,
-      nameLike: 'C1',
-      maxEmployees: 3,
-    };
-
-    const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual({
-      whereClause: `WHERE "num_employees">=$1 AND "num_employees"<=$2 AND "name" ILIKE $3`,
-      values: [1, 3, "%C1%"]
-    });
-  });
-
-  test("filter for nameLike returns correctly", function () {
-    const dataToFilter = {
-      nameLike: 'C1'
-    };
-
-    const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual({
-      whereClause: `WHERE "name" ILIKE $1`,
-      values: ["%C1%"]
-    });
-  });
-
-  test("filter for minEmployees returns correctly", function () {
-    const dataToFilter = {
-      minEmployees: 2,
-    };
-
-    const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual({
-      whereClause: `WHERE "num_employees">=$1`,
-      values: [2]
-    });
-  });
-
-  test("filter for maxEmployees returns correctly", function () {
-    const dataToFilter = {
-      maxEmployees: 2,
-    };
-
-    const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual({
-      whereClause: `WHERE "num_employees"<=$1`,
-      values: [2]
-    });
-  });
-
-  test("return null if input is empty", function () {
-    const dataToFilter = {};
-
-    const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual({ "values": [], "whereClause": "" });
   });
 
 });

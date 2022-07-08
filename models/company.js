@@ -3,7 +3,7 @@
 const req = require("express/lib/request");
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate, sqlForFilter } = require("../helpers/sql");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for companies. */
 
@@ -50,6 +50,61 @@ class Company {
     return company;
   }
 
+  /** _sqlForFilter: creates object of table columns and the values to be
+   *  updated.
+   *
+   * Inputs:
+   *  dataToFilter: an object of column names as keys and values to update.
+   *    {minEmployees: 2, maxEmployees: 4, nameLike: 'Aliya'}
+   *
+   *  If no inputs for dataToFilter, returns null to indicate no WHERE Clause
+   *    needed.
+   *
+   *  jsToSql: JS camelCase key name with values of SQL snake_case key name.
+   *    {minEmployees:'num_employees',
+   *       maxEmployees: 'num_employees',
+   *       nameLike: 'name' }
+   *
+   * Returns:
+   *  { whereClause: 'WHERE "num_employees">= $1
+   *                    AND "num_employees"<= $2'
+   *                    AND "name" ILIKE $3',
+   *    values: [2, 4, "%Aliya%]}
+   *
+   */
+
+  static _sqlForFilter(dataToFilter) {
+    console.log("in sqlForFilter");
+
+    const keys = Object.keys(dataToFilter);
+    if (keys.length === 0) return { whereClause: "", values: [] };
+
+    const cols = [];
+    const filterVals = [];
+
+    if (dataToFilter.minEmployees) {
+      filterVals.push(dataToFilter.minEmployees);
+      cols.push(`"num_employees">=$${filterVals.length}`);
+    }
+
+    if (dataToFilter.maxEmployees) {
+      filterVals.push(dataToFilter.maxEmployees);
+      cols.push(`"num_employees"<=$${filterVals.length}`);
+    }
+
+    if (dataToFilter.nameLike) {
+      filterVals.push(`%${dataToFilter.nameLike}%`);
+      cols.push(`"name" ILIKE $${filterVals.length}`);
+    }
+
+    console.log(filterVals);
+
+    return {
+      whereClause: `WHERE ${cols.join(" AND ")}`,
+      values: filterVals,
+    };
+  }
+
   /** Find all companies.
    *
    *  Allows for filtering by name, minEmployee, or maxEmployee. Optional for
@@ -61,7 +116,7 @@ class Company {
   static async findAll(queryParams) {
     console.log("in findAll", queryParams);
 
-    const { whereClause, values } = sqlForFilter(
+    const { whereClause, values } = this._sqlForFilter(
       queryParams,
       {
         minEmployees: 'num_employees',
@@ -80,7 +135,6 @@ class Company {
              ORDER BY name`, values);
     return companiesRes.rows;
   }
-
 
   /** Given a company handle, return data about company.
    *

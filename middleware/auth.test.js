@@ -101,7 +101,7 @@ describe("ensureCurrentUserOrAdmin", function () {
   });
 });
 
-//TODO: unauth because isadmin was never provided
+//TODO: write test unauth because isadmin was never provided
 describe("ensureAdmin", function () {
   test("works", function () {
     expect.assertions(1);

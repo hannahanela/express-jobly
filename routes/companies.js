@@ -65,6 +65,7 @@ router.get("/", async function (req, res, next) {
     query.maxEmployees = Number(req.query.maxEmployees);
   }
 
+  // TODO: write error test in company.test.js and move logic to model
   if (req.query.minEmployees !== undefined &&
     req.query.maxEmployees !== undefined &&
     query.minEmployees > query.maxEmployees) {
