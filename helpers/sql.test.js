@@ -103,7 +103,7 @@ describe("sqlForFilter method", function () {
     const dataToFilter = {};
 
     const res = sqlForFilter(dataToFilter);
-    expect(res).toEqual("");
+    expect(res).toEqual({"values": [], "whereClause": ""});
   });
 
 });
